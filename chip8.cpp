@@ -229,6 +229,14 @@ void Chip8::emulateCycle() {
 					idx += regX;
 					break;
 
+				case 0x33:
+					unsigned char val = regX;
+					for (int i = 0; i < 3; i--) {
+						memory[idx+i] = val%10;
+						val /= 10;
+					}
+					break;
+
 				case 0x55:
 					for (int i = 0; i <= nibble[1]; i++) {
 						memory[i+idx] = reg[i];
@@ -237,7 +245,7 @@ void Chip8::emulateCycle() {
 
 				case 0x65:
 					for (int i = 0; i <= nibble[1]; i++) {
-						reg[i] = memory[i+idx];
+						reg[i] = memory[idx+i];
 					}
 					break;
 			}
