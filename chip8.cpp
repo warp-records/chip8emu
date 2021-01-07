@@ -1,21 +1,28 @@
 #include "chip8.h"
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <cmath>
 
 
 void Chip8::initialize() {
-	//Program counter starts at 0x200
-	pc = 0x200;
+	//Program counter starts at byte 512, or address 0x200
+	pc = 512;
 	//clear these
   	opcode = 0;
   	idx = 0;
   	sp = 0;
 
-  	//load fontset
-  	for(int i = 0; i < 80; ++i)
-    	memory[i] = chip8_fontset[i];
+  	/*load fontset, with 16 different
+  	characters, and 5 bytes per character*/
+  	for(int i = 0; i < 80; i++) {
+  		//leave first 96 bytes for the stack!
+    	memory[i+96] = fontset[i];
+
+    	if (i%5 == 0) {
+    		/*inserts the characters 1 to
+    		F and maps them to their respective
+    		memory addresses*/
+    		char ch = (i/5 <= 10 ? '0' : 'A') + i/5;
+			fontsetMap.insert({'0' + i/5, i+96});
+    	}
+    }
 
  	loadGame("game.bin");
 };
@@ -63,6 +70,7 @@ void Chip8::emulateCycle() {
 	unsigned short nn 	= opcode & 0x00FF;
 	unsigned short n 	= opcode & 0x000F;
 
+	//The juice of the code!
 	switch (nibble[0]) {
 
 		case 0x0:
@@ -129,7 +137,8 @@ void Chip8::emulateCycle() {
 			regX = nn;
 			break;
 
-		//7XNN: increment V[X] by NN
+		/*7XNN: increment V[X] by NN,
+		NOT SURE if carry flag is changed or not!*/
 		case 0x7:
 			regX += nn;
 			break;
@@ -215,10 +224,29 @@ void Chip8::emulateCycle() {
 				}
 			}
 		}*/
+
+		case 0xE:
+			switch (nn) {
+				case 0x9E:
+					if (keyDown(regX))
+						pc += 2;
+					break;
+
+				case 0xA1:
+					if (!keyDown(regX))
+						pc += 2;
+					break;
+			}
+			break;
+
 		case 0xF:
 			switch (nn) {
 				case 0x07:
 					regX = delayTimer;
+					break;
+
+				case 0XA:
+					//implement later
 					break;
 
 				case 0x15:
@@ -229,13 +257,18 @@ void Chip8::emulateCycle() {
 					idx += regX;
 					break;
 
-				case 0x33:
+				case 0x29:
+					idx = fontsetMap[regX];
+					break;
+
+				case 0x33: {
 					unsigned char val = regX;
 					for (int i = 0; i < 3; i--) {
 						memory[idx+i] = val%10;
 						val /= 10;
 					}
 					break;
+				}
 
 				case 0x55:
 					for (int i = 0; i <= nibble[1]; i++) {
