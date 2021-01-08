@@ -214,16 +214,44 @@ void Chip8::emulateCycle() {
 
 		/*Display opcode. This is the most 
 		complex opcode, come back to it later.*/
-		/*case 0xD: {
-			int width = 8;
+		case 0xD: {
+			/*consider making these local to
+			the class itself*/
+			int constexpr screenWidth = 64;
+			int constexpr screenHeight = 32;
+
+			int constexpr width = 8;
 			int height = n + 1;
 
-			for (int x = regX; x < regX + width; x++) {
-				for (int y = regY; y < regY + height; y++) {
+			/*wrap around starting positions
+			but DONT wrap around the actual drawings*/
+			int startX = nibble[1] % screenWidth;
+			int startY = nibble[2] % screenHeight;
 
+			unsigned char spriteRow;
+
+			//false by default
+			regF = false;
+			
+			//clipping.
+			for (int y = 0; y < height && y + startY < screenHeight; y++) {
+				spriteRow = memory[idx + y];
+
+				for (int x = 0; x < width && x + startX < screenWidth; x++) {
+					unsigned char& pixel = gfx[startX + x][startY + y];
+
+					/*if the current pixel is XOR'd to zero,
+					set the V[F] flag to true*/
+					if (spriteRow&0x1 && pixel)
+						regF = true;
+					/*xor the current pixel with the current
+					bit of the sprite row byte*/
+					pixel ^= (spriteRow&0x1);
+					spriteRow >>= 1;
 				}
 			}
-		}*/
+
+		}
 
 		case 0xE:
 			switch (nn) {
