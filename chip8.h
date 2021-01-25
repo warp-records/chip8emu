@@ -111,6 +111,8 @@ class Chip8 {
 	void loadGame(std::string const& fileName);
 
 public:
+	bool drawFlag = false;
+
 	bool debugFlag = false;
 
 	void initialize(std::string const& game);
