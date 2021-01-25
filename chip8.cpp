@@ -61,6 +61,9 @@ void Chip8::executeCycle() {
 
 	if (pc > 4095)
 		throw std::exception();
+
+	drawFlag = false;
+
 	//merge two bytes of the pc
 	opcode = (memory[pc] << 8) | (memory[pc + 1]);
 
@@ -309,9 +312,8 @@ void Chip8::executeCycle() {
 
 				case 0x33: {
 					unsigned int val = regX;
-					//std::cout << "BCD Instruction\nVal: " << val;
 
-					for (int i = 0; i < 3; i++) {
+					for (int i = 2; i >= 0; i--) {
 						memory[idx+i] = val%10;
 						val /= 10;
 					}
@@ -345,12 +347,13 @@ void Chip8::executeCycle() {
 	if (cycleNumber/clockSpeed*60 >= 1) {
 		delayTimer--;
 		soundTimer--;
-		//clear console, apparently
 
-		//sleep for a certain amount of time
+		//sleep for 1/60th of a second
 		usleep(16667);
 
 		cycleNumber = 1;
+
+		drawFlag = true;
 	} else {
 		cycleNumber++;
 	}
