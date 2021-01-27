@@ -399,7 +399,7 @@ std::ostream& Chip8::gfxDraw(std::ostream& os) {
 
 	for (int i = 0; i < 32; i++) {
 		for (int j = 0; j < 64; j++) {
-			buffer << ((int) gfx[j][i] ? "\u2588\u2588" : "  ");
+			buffer << ((int) gfxBuffer()[j*32 + i] ? "\u2588\u2588" : "  ");
 		}
 		buffer << '\n';
 	}
