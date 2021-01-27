@@ -21,7 +21,7 @@ class Chip8 {
 
 	//in Hz, NOT MHz
 	//appears to be broken lol
-	static constexpr int clockSpeed = 50;
+	static constexpr int clockSpeed = 200;
 
 	//general registers
 	unsigned char reg[16] { 0 };
@@ -48,13 +48,13 @@ class Chip8 {
 	unsigned char soundTimer;
 
 	//keep track of keyboard input presses
-	bool keyPresses[16];
+	bool keyPresses[16] { 0 };
 	//map keyboard input characters to keypress index
 	std::map<char, int> keyInputMap {
 		{'1', 0 },  {'2', 1 },  {'3', 2 },  {'4', 3}, 
-		{'Q', 4 },  {'W', 5 },  {'E', 6 },  {'R', 7}, 
-		{'A', 8 },  {'S', 9 },  {'D', 10},  {'F', 11},
-		{'Z', 12},  {'X', 13},  {'C', 14},  {'V', 15}
+		{'q', 4 },  {'w', 5 },  {'e', 6 },  {'r', 7}, 
+		{'a', 8 },  {'s', 9 },  {'d', 10},  {'f', 11},
+		{'z', 12},  {'x', 13},  {'c', 14},  {'v', 15}
 	};
 
 	std::map<char, int> keyOutputMap {
@@ -63,6 +63,12 @@ class Chip8 {
 		{'7', 8 },  {'8', 9 },  {'9', 10},  {'E', 11},
 		{'A', 12},  {'0', 13},  {'B', 14},  {'F', 15}
 	};
+	/*char keyOutputMap[16] {
+		'1', '2', '3', '4',
+		'q', 'w', 'e', 'r',
+		'a', 's', 'd', 'd',
+		'z', 'x', 'c', 'v'
+	};*/
 
 
 	//apparently a chip8 fontset?
@@ -96,16 +102,10 @@ class Chip8 {
 
 
 	//handle keyboard events
-	bool keyDown(char key) {
-		return keyPresses[keyInputMap[key]];
-	}
-
-	void pressKey(char key) {
-		keyPresses[keyInputMap[key]] = true;
-	}
-
-	void unpressKey(char key) {
-		keyPresses[keyInputMap[key]] = false;
+	bool keyDown(int key) {
+		/*std::cout << "Testing for: " << std::hex <<
+		key << std::dec << '\n';*/
+		return keyPresses[key];
 	}
 
 	void loadGame(std::string const& fileName);
@@ -119,12 +119,32 @@ public:
 
 	void executeCycle();
 
-	auto getGraphicsBuffer() const {
-		return gfx;
+	const unsigned char* gfxBuffer() const {
+		return reinterpret_cast<const unsigned char*> (gfx);
 	}
 
 	std::pair<int, int> screenDimensions() {
 		return std::make_pair(screenWidth, screenHeight);
+	}
+
+	void pressKey(char key) {
+		if (keyInputMap.find(key) != keyInputMap.end()) {
+			keyPresses[keyInputMap[key]] = true;
+
+			/*for (int i = 0; i < 16; i++) {
+				std::cout << "  " << keyPresses[i];
+
+				if ((i%4 == 0))
+					std::cout << '\n';
+			}
+			std::cout << "\n\n";*/
+
+		}
+	}
+	void unpressKey(char key) {
+		if (keyInputMap.find(key) != keyInputMap.end()) {
+			keyPresses[keyInputMap[key]] = false;
+		}
 	}
 
 	std::ostream& memdump(std::ostream& os);
