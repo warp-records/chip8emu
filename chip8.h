@@ -21,7 +21,7 @@ class Chip8 {
 
 	//in Hz, NOT MHz
 	//appears to be broken lol
-	static constexpr int clockSpeed = 200;
+	int clockSpeed = 100;
 
 	//general registers
 	unsigned char reg[16] { 0 };
@@ -51,28 +51,15 @@ class Chip8 {
 	bool keyPresses[16] { 0 };
 	//map keyboard input characters to keypress index
 	std::map<char, int> keyInputMap {
-		{'1', 0 },  {'2', 1 },  {'3', 2 },  {'4', 3}, 
-		{'q', 4 },  {'w', 5 },  {'e', 6 },  {'r', 7}, 
-		{'a', 8 },  {'s', 9 },  {'d', 10},  {'f', 11},
-		{'z', 12},  {'x', 13},  {'c', 14},  {'v', 15}
+		{'1', 0x1 },  {'2', 0x2 },  {'3', 0x3 },  {'4', 0xC}, 
+		{'q', 0x4 },  {'w',0x5 },  {'e', 0x6 },  {'r', 0xD}, 
+		{'a', 0x7},  {'s', 0x8 },  {'d', 0x9},  {'f', 0xE},
+		{'z', 0xA},  {'x', 0x0},  {'c', 0xB},  {'v', 0xF}
 	};
-
-	std::map<char, int> keyOutputMap {
-		{'1', 0 },  {'2', 1 },  {'3', 2 },  {'C', 3}, 
-		{'4', 4 },  {'5', 5 },  {'6', 6 },  {'D', 7}, 
-		{'7', 8 },  {'8', 9 },  {'9', 10},  {'E', 11},
-		{'A', 12},  {'0', 13},  {'B', 14},  {'F', 15}
-	};
-	/*char keyOutputMap[16] {
-		'1', '2', '3', '4',
-		'q', 'w', 'e', 'r',
-		'a', 's', 'd', 'd',
-		'z', 'x', 'c', 'v'
-	};*/
 
 
 	//apparently a chip8 fontset?
-	unsigned char fontset[80] =
+	unsigned char fontset[80]
 	{ 
 	  0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
 	  0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -141,10 +128,15 @@ public:
 
 		}
 	}
+
 	void unpressKey(char key) {
 		if (keyInputMap.find(key) != keyInputMap.end()) {
 			keyPresses[keyInputMap[key]] = false;
 		}
+	}
+
+	void setClockSpeed(int speed) {
+		clockSpeed = speed;
 	}
 
 	std::ostream& memdump(std::ostream& os);
