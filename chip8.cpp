@@ -22,6 +22,7 @@ void Chip8::initialize(std::string const& game) {
   		//leave first 96 bytes for the stack!
     	memory[i+96] = fontset[i];
 
+    	//there MAY be a bug with fonts
     	if (i%5 == 0) {
     		/*inserts the characters 1 to
     		F and maps them to their respective
@@ -295,7 +296,15 @@ void Chip8::executeCycle() {
 					break;
 
 				case 0XA:
-					//implement later
+					//consider using an interrupt for performance benefits
+					for (unsigned char i = 0;; i++) {
+						if (keyDown(i)) {
+							regX = i;
+							pc += 2;
+							break;
+						}
+					}
+					pc -= 2;
 					break;
 
 				case 0x15:
@@ -345,8 +354,11 @@ void Chip8::executeCycle() {
 
 	//count down timers at 60hz
 	if (cycleNumber/clockSpeed*60 >= 1) {
-		delayTimer--;
-		soundTimer--;
+		if (delayTimer > 0)
+			delayTimer--;
+
+		if (soundTimer > 0)
+			soundTimer--;
 
 		//sleep for 1/60th of a second
 		usleep(16667);
