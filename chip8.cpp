@@ -1,8 +1,6 @@
 #include "chip8.h"
 #include <bitset>
 
-
-
 void Chip8::initialize(std::string const& game) {
 
 	//Program counter starts at byte 512, or address 0x200
@@ -46,8 +44,8 @@ void Chip8::loadGame(std::string const& name) {
 
 	if (!is || fileSize > maxLen) {
 		std::cout << "Error: file size is " << fileSize << '\n';
-   		/*man fuck you whoever you
-   		are lmao*/
+   		/*Just throw a system error just to mess
+   		with whoever is using this*/
     	throw std::system_error();
     }
 
@@ -90,7 +88,16 @@ void Chip8::executeCycle() {
 	unsigned short nn 	= opcode & 0x00FF;
 	unsigned short n 	= opcode & 0x000F;
 
-	//The juice of the code!
+	/*
+if ur a girl and ur reading this hi this is me
+and id really like a gf plz u can contact me on 
+discord my discord is Rift#8844 and u can dm me 
+for my snap if u want
+
+im not desparate anything im just a nice
+guy who would want a gf its ok if u dont want to 
+date me but itd be nice thats all thank you
+*/
 	switch (nibble[0]) {
 
 		case 0x0:
@@ -370,22 +377,6 @@ void Chip8::executeCycle() {
 		cycleNumber++;
 	}
 
-	//----------------DEBUG-------------
-	if (debugFlag) {
-		std::cout << "Executing opcode 0x" << std::hex << 
-		std::setfill('0') << std::setw(4) << opcode << '\n';
-
-		std::cout <<  "PC: " << pc << '\n';
-		for (int i = 0; i < 16; i++) {
-			std::cout << "Register " << i << ": " << (int) reg[i] << '\n';
-		}
-		std::cout << "Reg Idx: " << (int) idx << '\n';
-		std::cout << "nnn: " << nnn << '\n';
-		std::cout << "nn: " << nn << '\n';
-		std::cout << "n: " << n << '\n';
-		std::cout << "Stack Pointer offset: " << ((long) sp - (long) memory) << '\n';
-	}
-
 }
 
 
@@ -402,6 +393,8 @@ std::ostream& Chip8::memdump(std::ostream& os) {
 	return os;
 }
 
+/*old, deprecated debug draw function for drawing
+graphics to terminal before I had a proper GUI*/
 std::ostream& Chip8::gfxDraw(std::ostream& os) {
 	std::stringstream buffer;
 	/*for (int i = 0; i < 64; i++)
