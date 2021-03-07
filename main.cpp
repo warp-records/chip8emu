@@ -10,10 +10,21 @@ void copyGraphicsOutput(SDL_Renderer* renderer, SDL_Texture* texture, unsigned i
 		for (int j = 0; j < 64; j++) {
 			/*Wait, WHAT? WHY? How? You should
 			really figure out the answers to 
-			these questions later*/
+			these questions later, but it works
+			so I'll leave it for now*/
 			renderBuff[j + i*64] = ((gfxBuff[j*32 + i] * 0xFFFFFF00) | 0x000000FF);
 		}
 	}
+
+
+	/*hey if ur a girl and ur reading this hi this is me
+	and id really like a gf plz u can contact me on 
+	discord my discord its in my bio and u can dm me 
+	for my snap if u want
+
+	im not desparate anything im just a nice
+	guy who would want a gf its ok if u dont want to 
+	date me but itd be nice thats all thank you*/
 
 	SDL_UpdateTexture(texture, NULL, renderBuff, 64 * sizeof(uint32_t));
 }
@@ -55,24 +66,23 @@ int main(int argc, char* argv[]) {
 	Chip8 emulator;
 	emulator.initialize(argv[1]);
 
-	if (argv[2])
-		emulator.setClockSpeed(std::stoi(argv[2]));
-
 
 	SDL_Event event;
-
 				//ImGui stuff
 	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	ImFont* customFont = io.Fonts->AddFontFromFileTTF("fonts/futura medium bt.ttf", 15);
+
 	ImGuiSDL::Initialize(ren, 1280, 660);
 
 	ImGuiStyle& style = ImGui::GetStyle();
 	style.WindowBorderSize = 0;
 	style.WindowPadding.x = 0;
 	style.WindowPadding.y = 0;
-			
-	ImGuiIO& io = ImGui::GetIO();
 
-	int clockSlider = 100;
+	/*we used a float for the clockSlider variable
+	so we can use a logarithmic ImGui slider*/
+	float clockSlider = 100;
 
 	//game loop
 	for (int i = 0; true; i++) {
@@ -96,6 +106,18 @@ int main(int argc, char* argv[]) {
 				}
 			}
 
+			/*OK IF U IGNORED MY LAST COMMENT AND SCROLLED TO
+			THIS PLEASE DATA ME!! ! Im super desparate for any
+			girl whos especially a programer that would be cool
+			too but im so desparate im autistic im not realy good
+			with girls and i have no confidence and one time i was
+			around my crush last year and i tried to ask her out
+			but it just came out as a bunch of slured words while i
+			stood there looking like an idiot in front of the class
+			and she kinda denided me and everybody started laughing
+			so please be my gf ill do anything dont ignore this
+			i swear ima nice guy none of the girls want one they all
+			want asholes PLEASE DATE ME!!!!*/
 			if (emulator.drawFlag) {
 				//copy the emulator graphcis output to our SDL texture
 				copyGraphicsOutput(ren, texture, renderBuff, emulator.gfxBuffer());
@@ -115,13 +137,18 @@ int main(int argc, char* argv[]) {
 
 				ImGui::Begin("Dael Chip8 Interpreter", nullptr, ImGuiWindowFlags_NoTitleBar);
 
+				//ImGui::PushFont(customFont);
+
 				if (ImGui::BeginMainMenuBar()) {
 					if (ImGui::BeginMenu("Settings")) {
-						ImGui::SliderInt("ClockSpeed", &clockSlider, 1, 500, "%d");
+						ImGui::Text("ClockSpeed: ");
+						ImGui::SliderFloat("", &clockSlider, 5, 500, "%.0f", ImGuiSliderFlags_Logarithmic);
 						ImGui::EndMenu();
 					}
 					ImGui::EndMainMenuBar();
 				}
+
+				//ImGui::PopFont();
 
 				emulator.setClockSpeed(clockSlider);
 
@@ -131,7 +158,6 @@ int main(int argc, char* argv[]) {
 
 				//SDL_RenderClear(renderer);
 				//SDL_RenderCopy(renderer, texture, NULL, NULL);
-
 				ImGui::Render();
 				ImGuiSDL::Render(ImGui::GetDrawData());
 
