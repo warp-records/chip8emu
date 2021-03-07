@@ -11,3 +11,6 @@ I'm not sure how I would include this properly into my github, but my game uses 
 SDL: https://www.libsdl.org/
 ImGui: https://github.com/ocornut/imgui
 ImGuiSDL: https://github.com/Tyyppi77/imgui_sdl
+
+# Building
+I didn't implement a proper makefile and just relied on a build script to build my code. To get the project to build, I changed the SDL include to SDL2/SDL. There may have been a few other includes I changed in header files to get it to build. Also, I used a custom font, and the program won't run without it. If you actually wnat to use this, either go looking for the font "futura medium bt" and put it in a folder called "fonts", or just remove it from the code on line 74 in main before building. 
