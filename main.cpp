@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
 				//ImGui stuff
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	ImFont* customFont = io.Fonts->AddFontFromFileTTF("fonts/futura medium bt.ttf", 15);
+	//ImFont* customFont = io.Fonts->AddFontFromFileTTF("fonts/futura medium bt.ttf", 15);
 
 	ImGuiSDL::Initialize(ren, 1280, 660);
 
